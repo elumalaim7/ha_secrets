@@ -46,7 +46,7 @@ resource "null_resource" "kubeconfig" {
   depends_on = ["aws_autoscaling_group.demo"]
 }
 
-# Deploy ConfigMap for worker nodes to be automatically added to the cluster
+# Deploy ConfigMap for worker nodes w/demo-node arn to be added to the cluster under the following clusterroles: system:bootstrappers and system:nodes
 resource "kubernetes_config_map" "aws_auth" {
   metadata {
     name      = "aws-auth"

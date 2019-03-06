@@ -124,7 +124,7 @@ resource "aws_autoscaling_group" "demo" {
   launch_configuration = "${aws_launch_configuration.demo.id}"
   max_size             = 2
   min_size             = 1
-  name                 = "terraform-eks-demo"
+  name                 = "${var.node_name}"
   vpc_zone_identifier  = ["${aws_subnet.demo.*.id}"]
 
   tag {

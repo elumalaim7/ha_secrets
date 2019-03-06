@@ -265,4 +265,6 @@ resource "kubernetes_stateful_set" "consul" {
       }
     }
   }
+
+  depends_on = ["kubernetes_service.consul"]
 }
