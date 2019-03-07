@@ -2,7 +2,7 @@ variable "region" {
   default = "ap-northeast-1"
 }
 
-variable "cluster-name" {
+variable "cluster_name" {
   default = "ld"
   type    = "string"
 }

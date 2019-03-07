@@ -24,6 +24,11 @@ data "template_file" "vault_config" {
       "tls_key_file": "/etc/tls/vault-key.pem"
     }
   },
+  "seal": {
+    "awskms": {
+      "region": "ap-northeast-1"
+    }
+  },
   "storage": {
     "consul": {
       "address": "consul:8500",
@@ -70,6 +75,8 @@ resource "kubernetes_service" "vault" {
       app = "vault"
     }
   }
+
+  depends_on = ["kubernetes_stateful_set.consul", "kubernetes_config_map.vault"]
 }
 
 # VAULT DEPLOYMENT
