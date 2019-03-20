@@ -19,7 +19,7 @@ resource "aws_security_group" "demo-cluster" {
 #           to the Kubernetes. You will need to replace A.B.C.D below with
 #           your real IP. Services like icanhazip.com can help you find this.
 resource "aws_security_group_rule" "demo-cluster-ingress-workstation-https" {
-  cidr_blocks       = ["98.178.243.105/32"]
+  cidr_blocks       = ["${var.my_ip}"]
   description       = "Allow workstation to communicate with the cluster API Server"
   from_port         = 443
   protocol          = "tcp"
@@ -87,10 +87,6 @@ data "aws_ami" "eks-worker" {
   most_recent = true
   owners      = ["${var.account_id}"] # Amazon EKS AMI Account ID
 }
-
-# This data source is included for ease of sample architecture deployment
-# and can be swapped out as necessary.
-# data "aws_region" "current" {}
 
 # EKS currently documents this required userdata for EKS worker nodes to
 # properly configure Kubernetes applications on the EC2 instance.
