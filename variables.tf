@@ -2,7 +2,7 @@ variable "region" {
   default = "ap-northeast-1"
 }
 
-variable "cluster-name" {
+variable "cluster_name" {
   default = "ld"
   type    = "string"
 }
@@ -15,8 +15,9 @@ variable "node_name" {
   default = "ld-eks-worker-poc"
 }
 
-variable "gossip_key" {}
+# In `terraform.tfvars`
 
+variable "gossip_key" {}
 variable "ca_path" {}
 variable "consul_key_path" {}
 variable "consul_cert_path" {}
