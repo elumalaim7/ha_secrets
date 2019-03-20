@@ -1,4 +1,7 @@
 # Highly Available Secrets
-Consul & Vault on Kubernetes on AWS EKS using Terraform
-
+- [x] Terraform
+- [x] Vault
+- [x] Consul
+- [x] AWS EKS
+- [x] Kubernetes
 ---

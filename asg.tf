@@ -1,7 +1,7 @@
 resource "aws_security_group" "demo-cluster" {
   name        = "terraform-eks-demo-cluster"
   description = "Cluster communication with worker nodes"
-  vpc_id      = "${aws_vpc.demo.id}"
+  vpc_id      = "${data.aws_vpc.demo.id}"
 
   egress {
     from_port   = 0
@@ -31,7 +31,7 @@ resource "aws_security_group_rule" "demo-cluster-ingress-workstation-https" {
 resource "aws_security_group" "demo-node" {
   name        = "terraform-eks-demo-node"
   description = "Security group for all nodes in the cluster"
-  vpc_id      = "${aws_vpc.demo.id}"
+  vpc_id      = "${data.aws_vpc.demo.id}"
 
   egress {
     from_port   = 0
@@ -125,11 +125,11 @@ resource "aws_autoscaling_group" "demo" {
   max_size             = 2
   min_size             = 1
   name                 = "${var.node_name}"
-  vpc_zone_identifier  = ["${aws_subnet.demo.*.id}"]
+  vpc_zone_identifier  = ["${data.aws_subnet.demo.*.id}"]
 
   tag {
     key                 = "Name"
-    value               = "terraform-eks-demo"
+    value               = "${var.node_name}"
     propagate_at_launch = true
   }
 

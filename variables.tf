@@ -1,18 +1,19 @@
 variable "region" {
-  default = "ap-northeast-1"
+  default = "us-west-2" # Oregon
 }
 
 variable "cluster_name" {
-  default = "ld"
+  default = "vault"
   type    = "string"
 }
 
 variable "instance_type" {
   default = "t3.xlarge"
+  default = "t3.medium"
 }
 
 variable "node_name" {
-  default = "ld-eks-worker-poc"
+  default = "vault-eks-worker"
 }
 
 # In `terraform.tfvars`
@@ -24,3 +25,6 @@ variable "consul_cert_path" {}
 variable "vault_key_path" {}
 variable "vault_cert_path" {}
 variable "account_id" {}
+variable "vpc_id" {}
+variable "subnet_id" {}
+variable "subnet_id2" {}
