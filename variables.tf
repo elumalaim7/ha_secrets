@@ -3,7 +3,7 @@ variable "region" {
 }
 
 variable "cluster_name" {
-  default = "ld"
+  default = "ld-demo"
   type    = "string"
 }
 
