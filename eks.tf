@@ -26,7 +26,7 @@ set -o xtrace
 USERDATA
 }
 
-# grab the token from the EKS cluster 
+# grab the token from the EKS cluster to communicate w/ EKS cluster w/ aws-iam-authenticator
 data "aws_eks_cluster_auth" "token" {
   name = "${aws_eks_cluster.demo.name}"
 }
