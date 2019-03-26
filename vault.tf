@@ -29,11 +29,6 @@ data "template_file" "vault_config" {
       "tls_key_file": "/etc/tls/vault-key.pem"
     }
   },
-  "seal": {
-    "awskms": {
-      "region": "ap-northeast-1"
-    }
-  },
   "storage": {
     "consul": {
       "address": "consul:8500",
@@ -114,7 +109,7 @@ resource "kubernetes_deployment" "vault" {
         container {
           name              = "vault"
           command           = ["vault", "server", "-config", "/vault/config/config.json"]
-          image             = "vault:0.11.5"
+          image             = "${var.vault_image}"
           image_pull_policy = "IfNotPresent"
 
           security_context {

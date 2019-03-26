@@ -24,6 +24,8 @@ variable "consul_cert_path" {}
 variable "vault_key_path" {}
 variable "vault_cert_path" {}
 variable "account_id" {}
+variable "vault_image" {}
+variable "consul_image" {}
 
 variable "my_ip" {
   description = "format: x.x.x.x/xx"
