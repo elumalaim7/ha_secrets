@@ -27,6 +27,7 @@ variable "account_id" {}
 variable "vault_image" {}
 variable "consul_image" {}
 
+# to allow traffic from your local machine to kubernetes
 variable "my_ip" {
   description = "format: x.x.x.x/xx"
 }

@@ -29,6 +29,12 @@ data "template_file" "vault_config" {
       "tls_key_file": "/etc/tls/vault-key.pem"
     }
   },
+  "seal": {
+    "awskms": {
+      "region": "${var.region}",
+      "kms_key_id": "${aws_kms_key.vault.id}"
+    }
+  },
   "storage": {
     "consul": {
       "address": "consul:8500",
