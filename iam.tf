@@ -10,9 +10,9 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
-data "aws_iam_policy_document" "vault-kms-unseal" {
+data "aws_iam_policy_document" "vault-eks-demo" {
   statement {
-    sid       = "VaultKMSUnseal"
+    sid       = "VaultEKSDemo"
     effect    = "Allow"
     resources = ["*"]
 
@@ -33,14 +33,14 @@ resource "aws_iam_role" "demo-node" {
   assume_role_policy = "${data.aws_iam_policy_document.assume_role.json}"
 }
 
-resource "aws_iam_role_policy" "vault-kms-unseal" {
-  name   = "Vault-KMS-Unseal"
+resource "aws_iam_role_policy" "vault-eks-demo" {
+  name   = "vault-eks-demo"
   role   = "${aws_iam_role.demo-node.id}"
-  policy = "${data.aws_iam_policy_document.vault-kms-unseal.json}"
+  policy = "${data.aws_iam_policy_document.vault-eks-demo.json}"
 }
 
-resource "aws_iam_instance_profile" "vault-kms-unseal" {
-  name = "vault-kms-unseal"
+resource "aws_iam_instance_profile" "vault-eks-demo" {
+  name = "vault-eks-demo"
   role = "${aws_iam_role.demo-node.name}"
 }
 

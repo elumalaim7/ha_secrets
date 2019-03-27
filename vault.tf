@@ -31,7 +31,8 @@ data "template_file" "vault_config" {
   },
   "seal": {
     "awskms": {
-      "region": "ap-northeast-1"
+      "region": "${var.region}",
+      "kms_key_id": "${aws_kms_key.vault.id}"
     }
   },
   "storage": {
@@ -114,7 +115,7 @@ resource "kubernetes_deployment" "vault" {
         container {
           name              = "vault"
           command           = ["vault", "server", "-config", "/vault/config/config.json"]
-          image             = "vault:0.11.5"
+          image             = "${var.vault_image}"
           image_pull_policy = "IfNotPresent"
 
           security_context {

@@ -16,7 +16,7 @@ resource "aws_security_group" "demo-cluster" {
 }
 
 # OPTIONAL: Allow inbound traffic from your local workstation external IP
-#           to the Kubernetes. You will need to replace A.B.C.D below with
+#           to Kubernetes. You will need to replace A.B.C.D below with
 #           your real IP. Services like icanhazip.com can help you find this.
 resource "aws_security_group_rule" "demo-cluster-ingress-workstation-https" {
   cidr_blocks       = ["${var.my_ip}"]
@@ -49,7 +49,7 @@ resource "aws_security_group" "demo-node" {
 }
 
 resource "aws_security_group_rule" "demo-node-ingress-self" {
-  description              = "Allow node to communicate with each other"
+  description              = "Allow nodes to communicate with each other"
   from_port                = 0
   protocol                 = "-1"
   security_group_id        = "${aws_security_group.demo-node.id}"
@@ -78,6 +78,7 @@ resource "aws_security_group_rule" "demo-cluster-ingress-node-https" {
   type                     = "ingress"
 }
 
+# Data source to get the ID of a registered AMI for launch configuration
 data "aws_ami" "eks-worker" {
   filter {
     name   = "name"
@@ -90,9 +91,9 @@ data "aws_ami" "eks-worker" {
 
 resource "aws_launch_configuration" "demo" {
   associate_public_ip_address = true
-  iam_instance_profile        = "${aws_iam_instance_profile.vault-kms-unseal.name}"
+  iam_instance_profile        = "${aws_iam_instance_profile.vault-eks-demo.name}"
   image_id                    = "${data.aws_ami.eks-worker.id}"
-  instance_type               = "${var.instance_type}"                              # t3.xlarge
+  instance_type               = "${var.instance_type}"                            # t3.xlarge
   name_prefix                 = "${var.node_name}"
   security_groups             = ["${aws_security_group.demo-node.id}"]
   user_data_base64            = "${base64encode(local.demo-node-userdata)}"
@@ -103,10 +104,10 @@ resource "aws_launch_configuration" "demo" {
 }
 
 resource "aws_autoscaling_group" "demo" {
-  desired_capacity     = 2
+  desired_capacity     = 3
   launch_configuration = "${aws_launch_configuration.demo.id}"
-  max_size             = 2
-  min_size             = 1
+  max_size             = 3
+  min_size             = 2
   name                 = "${var.node_name}"
   vpc_zone_identifier  = ["${aws_subnet.demo.*.id}"]
 
