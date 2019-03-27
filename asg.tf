@@ -43,7 +43,7 @@ resource "aws_security_group" "demo-node" {
   tags = "${
                                       map(
                                              "Name", "terraform-eks-demo-node",
-                                                  "kubernetes.io/cluster/${var.cluster_name}", "owned",
+                                                  "kubernetes.io/cluster/${terraform.workspace}-${var.cluster_name}", "owned",
                                                       )
                                                         }"
 }
@@ -104,22 +104,28 @@ resource "aws_launch_configuration" "demo" {
 }
 
 resource "aws_autoscaling_group" "demo" {
-  desired_capacity     = 3
+  desired_capacity     = 2
   launch_configuration = "${aws_launch_configuration.demo.id}"
-  max_size             = 3
-  min_size             = 2
+  max_size             = 2
+  min_size             = 1
   name                 = "${var.node_name}"
   vpc_zone_identifier  = ["${aws_subnet.demo.*.id}"]
 
   tag {
     key                 = "Name"
     value               = "terraform-eks-demo"
-    propagate_at_launch = true
+    propagate_at_launch = "true"
   }
 
   tag {
-    key                 = "kubernetes.io/cluster/${var.cluster_name}"
+    key                 = "workspace"
+    value               = "${terraform.workspace}"
+    propagate_at_launch = "true"
+  }
+
+  tag {
+    key                 = "kubernetes.io/cluster/${terraform.workspace}-${var.cluster_name}"
     value               = "owned"
-    propagate_at_launch = true
+    propagate_at_launch = "true"
   }
 }

@@ -6,7 +6,7 @@ resource "aws_vpc" "demo" {
   tags = "${
     map(
      "Name", "terraform-eks-demo-node",
-     "kubernetes.io/cluster/${var.cluster_name}", "shared",
+     "kubernetes.io/cluster/${terraform.workspace}-${var.cluster_name}", "shared",
     )
   }"
 }
@@ -21,7 +21,7 @@ resource "aws_subnet" "demo" {
   tags = "${
     map(
      "Name", "terraform-eks-demo-node",
-     "kubernetes.io/cluster/${var.cluster_name}", "shared",
+     "kubernetes.io/cluster/${terraform.workspace}-${var.cluster_name}", "shared",
     )
   }"
 }

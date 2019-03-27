@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "demo" {
-  name     = "${var.cluster_name}"
+  name     = "${terraform.workspace}-${var.cluster_name}"
   role_arn = "${aws_iam_role.demo-cluster.arn}"
 
   vpc_config {
@@ -22,7 +22,7 @@ locals {
   demo-node-userdata = <<USERDATA
 #!/bin/bash
 set -o xtrace
-/etc/eks/bootstrap.sh --apiserver-endpoint '${aws_eks_cluster.demo.endpoint}' --b64-cluster-ca '${aws_eks_cluster.demo.certificate_authority.0.data}' '${var.cluster_name}'
+/etc/eks/bootstrap.sh --apiserver-endpoint '${aws_eks_cluster.demo.endpoint}' --b64-cluster-ca '${aws_eks_cluster.demo.certificate_authority.0.data}' '${terraform.workspace}-${var.cluster_name}'
 USERDATA
 }
 
