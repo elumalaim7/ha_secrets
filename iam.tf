@@ -40,8 +40,8 @@ resource "aws_iam_role_policy" "vault-eks-demo" {
 }
 
 resource "aws_iam_instance_profile" "vault-eks-demo" {
-  name = "vault-eks-demo"
-  role = "${aws_iam_role.demo-node.name}"
+  name_prefix = "vault-eks-demo"
+  role        = "${aws_iam_role.demo-node.name}"
 }
 
 resource "aws_iam_role" "demo-cluster" {
