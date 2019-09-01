@@ -1,15 +1,5 @@
 data "aws_availability_zones" "available" {}
 
-#resource "aws_vpc" "demo" {
-#  cidr_block = "10.10.0.0/16"
-#
-#  tags = "${
-#    map(
-#     "Name", "terraform-eks-demo-node",
-#     "kubernetes.io/cluster/${var.cluster_name}", "shared",
-#    )
-#  }"
-#}
 data "aws_vpc" "demo" {
   id = "${var.vpc_id}"
 }

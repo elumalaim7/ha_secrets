@@ -16,10 +16,10 @@ resource "aws_security_group" "demo-cluster" {
 }
 
 # OPTIONAL: Allow inbound traffic from your local workstation external IP
-#           to the Kubernetes. You will need to replace A.B.C.D below with
+#           to Kubernetes. You will need to replace A.B.C.D below with
 #           your real IP. Services like icanhazip.com can help you find this.
 resource "aws_security_group_rule" "demo-cluster-ingress-workstation-https" {
-  cidr_blocks       = ["98.178.243.105/32"]
+  cidr_blocks       = ["${var.my_ip}"]
   description       = "Allow workstation to communicate with the cluster API Server"
   from_port         = 443
   protocol          = "tcp"
@@ -43,13 +43,13 @@ resource "aws_security_group" "demo-node" {
   tags = "${
                                       map(
                                              "Name", "terraform-eks-demo-node",
-                                                  "kubernetes.io/cluster/${var.cluster_name}", "owned",
+                                                  "kubernetes.io/cluster/${terraform.workspace}-${var.cluster_name}", "owned",
                                                       )
                                                         }"
 }
 
 resource "aws_security_group_rule" "demo-node-ingress-self" {
-  description              = "Allow node to communicate with each other"
+  description              = "Allow nodes to communicate with each other"
   from_port                = 0
   protocol                 = "-1"
   security_group_id        = "${aws_security_group.demo-node.id}"
@@ -78,6 +78,7 @@ resource "aws_security_group_rule" "demo-cluster-ingress-node-https" {
   type                     = "ingress"
 }
 
+# Data source to get the ID of a registered AMI for launch configuration
 data "aws_ami" "eks-worker" {
   filter {
     name   = "name"
@@ -88,29 +89,12 @@ data "aws_ami" "eks-worker" {
   owners      = ["${var.account_id}"] # Amazon EKS AMI Account ID
 }
 
-# This data source is included for ease of sample architecture deployment
-# and can be swapped out as necessary.
-# data "aws_region" "current" {}
-
-# EKS currently documents this required userdata for EKS worker nodes to
-# properly configure Kubernetes applications on the EC2 instance.
-# We utilize a Terraform local here to simplify Base64 encoding this
-# information into the AutoScaling Launch Configuration.
-# More information: https://docs.aws.amazon.com/eks/latest/userguide/launch-workers.html
-locals {
-  demo-node-userdata = <<USERDATA
-#!/bin/bash
-set -o xtrace
-/etc/eks/bootstrap.sh --apiserver-endpoint '${aws_eks_cluster.demo.endpoint}' --b64-cluster-ca '${aws_eks_cluster.demo.certificate_authority.0.data}' '${var.cluster_name}'
-USERDATA
-}
-
 resource "aws_launch_configuration" "demo" {
   associate_public_ip_address = true
-  iam_instance_profile        = "${aws_iam_instance_profile.vault-kms-unseal.name}"
+  iam_instance_profile        = "${aws_iam_instance_profile.vault-eks-demo.name}"
   image_id                    = "${data.aws_ami.eks-worker.id}"
-  instance_type               = "${var.instance_type}"                              # t3.xlarge
-  name_prefix                 = "${var.node_name}"
+  instance_type               = "${var.instance_type}"                            # t3.xlarge
+  name_prefix                 = "${terraform.workspace}-${var.node_name}"
   security_groups             = ["${aws_security_group.demo-node.id}"]
   user_data_base64            = "${base64encode(local.demo-node-userdata)}"
 
@@ -134,8 +118,14 @@ resource "aws_autoscaling_group" "demo" {
   }
 
   tag {
-    key                 = "kubernetes.io/cluster/${var.cluster_name}"
+    key                 = "workspace"
+    value               = "${terraform.workspace}"
+    propagate_at_launch = "true"
+  }
+
+  tag {
+    key                 = "kubernetes.io/cluster/${terraform.workspace}-${var.cluster_name}"
     value               = "owned"
-    propagate_at_launch = true
+    propagate_at_launch = "true"
   }
 }
