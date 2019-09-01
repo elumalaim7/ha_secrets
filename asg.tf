@@ -1,5 +1,5 @@
 resource "aws_security_group" "demo-cluster" {
-  name        = "terraform-eks-demo-cluster"
+  name_prefix = "terraform-eks-demo-cluster"
   description = "Cluster communication with worker nodes"
   vpc_id      = "${data.aws_vpc.demo.id}"
 
@@ -8,6 +8,10 @@ resource "aws_security_group" "demo-cluster" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 
   tags = {
@@ -29,7 +33,7 @@ resource "aws_security_group_rule" "demo-cluster-ingress-workstation-https" {
 }
 
 resource "aws_security_group" "demo-node" {
-  name        = "terraform-eks-demo-node"
+  name_prefix = "terraform-eks-demo-node"
   description = "Security group for all nodes in the cluster"
   vpc_id      = "${data.aws_vpc.demo.id}"
 
@@ -38,6 +42,10 @@ resource "aws_security_group" "demo-node" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 
   tags = "${
@@ -108,12 +116,12 @@ resource "aws_autoscaling_group" "demo" {
   launch_configuration = "${aws_launch_configuration.demo.id}"
   max_size             = 2
   min_size             = 1
-  name                 = "${var.node_name}"
+  name_prefix          = "${terraform.workspace}-${var.node_name}"
   vpc_zone_identifier  = ["${data.aws_subnet.demo.*.id}"]
 
   tag {
     key                 = "Name"
-    value               = "${var.node_name}"
+    value               = "${terraform.workspace}-${var.node_name}"
     propagate_at_launch = true
   }
 

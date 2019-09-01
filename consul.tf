@@ -148,7 +148,7 @@ resource "kubernetes_stateful_set" "consul" {
 
         container {
           name  = "consul"
-          image = "${var.consul_image}"
+          image = "consul:1.4.0"
 
           env {
             name = "POD_IP"

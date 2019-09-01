@@ -115,7 +115,7 @@ resource "kubernetes_deployment" "vault" {
         container {
           name              = "vault"
           command           = ["vault", "server", "-config", "/vault/config/config.json"]
-          image             = "${var.vault_image}"
+          image             = "vault:0.11.5"
           image_pull_policy = "IfNotPresent"
 
           security_context {
