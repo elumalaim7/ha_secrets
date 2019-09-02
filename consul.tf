@@ -39,6 +39,8 @@ resource "kubernetes_config_map" "consul" {
   data {
     config.json = "${data.template_file.consul_config.rendered}"
   }
+
+  depends_on = ["kubernetes_config_map.aws_auth"]
 }
 
 # CONSUL SERVICE to expose each of the Consul members internally

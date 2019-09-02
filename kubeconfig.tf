@@ -48,13 +48,13 @@ resource "null_resource" "kubeconfig" {
 }
 
 # aws command to automatically add kubeconfig information given an eks cluster name and region
-resource "null_resource" "kubeconfig2" {
-  provisioner "local-exec" {
-    command = "aws eks --region ${var.region} update-kubeconfig --alias ${terraform.workspace}-aws --name ${terraform.workspace}-${var.cluster_name}"
-  }
-
-  depends_on = ["aws_eks_cluster.demo"]
-}
+#resource "null_resource" "kubeconfig2" {
+#  provisioner "local-exec" {
+#    command = "aws eks --region ${var.region} update-kubeconfig --alias ${terraform.workspace}-aws --name ${terraform.workspace}-${var.cluster_name}"
+#  }
+#
+#  depends_on = ["aws_eks_cluster.demo"]
+#}
 
 # Deploy ConfigMap for worker nodes w/demo-node arn to be added to the cluster under the following clusterroles: system:bootstrappers and system:nodes
 resource "kubernetes_config_map" "aws_auth" {
